@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ProcrastiMate — Stop Wishing. Start Doing.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:        #0a0a0f;
+      --bg2:       #12121a;
+      --bg3:       #1a1a28;
+      --border:    rgba(255,255,255,0.08);
+      --purple:    #7c3aed;
+      --purple-l:  #9d5cf6;
+      --green:     #10b981;
+      --green-l:   #34d399;
+      --red:       #ef4444;
+      --yellow:    #f59e0b;
+      --text:      #f1f5f9;
+      --text-m:    #94a3b8;
+      --text-d:    #475569;
+      --radius:    16px;
+      --radius-sm: 10px;
+      --shadow:    0 25px 50px rgba(0,0,0,0.5);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+    input, textarea, select {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+    }
+    button { cursor: pointer; font-family: 'Inter', sans-serif; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 99px; }
+
+    /* ============================================================
+       NAV
+    ============================================================ */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2.5rem;
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-size: 1.3rem; font-weight: 800;
+    }
+    .nav-logo span { color: var(--purple-l); }
+    .nav-logo .logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--purple), var(--purple-l));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+    .nav-links { display: flex; align-items: center; gap: 2rem; }
+    .nav-links a {
+      color: var(--text-m); font-size: 0.9rem; font-weight: 500;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: linear-gradient(135deg, var(--purple), var(--purple-l));
+      color: #fff; border: none; border-radius: 99px;
+      padding: 0.6rem 1.4rem; font-size: 0.9rem; font-weight: 600;
+      transition: opacity .2s, transform .15s;
+    }
+    .nav-cta:hover { opacity: .88; transform: translateY(-1px); }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(124,58,237,.35) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 90% 80%, rgba(16,185,129,.15) 0%, transparent 60%);
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(124,58,237,.18); border: 1px solid rgba(124,58,237,.4);
+      border-radius: 99px; padding: 0.4rem 1rem;
+      font-size: 0.8rem; font-weight: 600; color: var(--purple-l);
+      margin-bottom: 1.5rem; position: relative; z-index: 1;
+      animation: fadeDown .6s ease both;
+    }
+    .hero h1 {
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 900; line-height: 1.05;
+      letter-spacing: -0.03em;
+      position: relative; z-index: 1;
+      animation: fadeDown .7s .1s ease both;
+    }
+    .hero h1 .grad {
+      background: linear-gradient(135deg, #fff 30%, var(--purple-l));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero h1 .grad-green {
+      background: linear-gradient(135deg, var(--green-l), #6ee7b7);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      margin-top: 1.4rem;
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: var(--text-m); max-width: 600px;
+      line-height: 1.7; position: relative; z-index: 1;
+      animation: fadeDown .7s .2s ease both;
+    }
+    .hero-actions {
+      margin-top: 2.5rem;
+      display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+      position: relative; z-index: 1;
+      animation: fadeDown .7s .3s ease both;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--purple), var(--purple-l));
+      color: #fff; border: none; border-radius: 99px;
+      padding: 0.85rem 2rem; font-size: 1rem; font-weight: 700;
+      box-shadow: 0 0 30px rgba(124,58,237,.4);
+      transition: transform .15s, box-shadow .2s;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(124,58,237,.6); }
+    .btn-secondary {
+      background: rgba(255,255,255,.07); color: var(--text);
+      border: 1px solid var(--border); border-radius: 99px;
+      padding: 0.85rem 2rem; font-size: 1rem; font-weight: 600;
+      transition: background .2s, transform .15s;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,.12); transform: translateY(-2px); }
+
+    /* stats strip */
+    .hero-stats {
+      display: flex; gap: 3rem; flex-wrap: wrap; justify-content: center;
+      margin-top: 4rem; position: relative; z-index: 1;
+      animation: fadeDown .7s .4s ease both;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat .val {
+      font-size: 2rem; font-weight: 800;
+      background: linear-gradient(135deg, #fff, var(--purple-l));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero-stat .lbl { font-size: 0.8rem; color: var(--text-d); font-weight: 500; margin-top: .2rem; }
+
+    /* scroll indicator */
+    .scroll-indicator {
+      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: .4rem;
+      color: var(--text-d); font-size: .75rem; z-index: 1;
+      animation: bounce 2s infinite;
+    }
+
+    /* ============================================================
+       HOW IT WORKS
+    ============================================================ */
+    .section { padding: 5rem 2rem; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-tag {
+      display: inline-block;
+      background: rgba(16,185,129,.12); border: 1px solid rgba(16,185,129,.3);
+      color: var(--green-l); border-radius: 99px;
+      padding: .3rem .9rem; font-size: .78rem; font-weight: 700;
+      letter-spacing: .05em; text-transform: uppercase; margin-bottom: 1rem;
+    }
+    .section-tag.purple {
+      background: rgba(124,58,237,.12); border-color: rgba(124,58,237,.3);
+      color: var(--purple-l);
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800; letter-spacing: -.02em; margin-bottom: 1rem;
+    }
+    .section-sub { color: var(--text-m); font-size: 1.05rem; max-width: 520px; line-height: 1.7; }
+
+    .steps-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem; margin-top: 3rem;
+    }
+    .step-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.8rem;
+      transition: border-color .2s, transform .2s;
+    }
+    .step-card:hover { border-color: var(--purple); transform: translateY(-4px); }
+    .step-num {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--purple), var(--purple-l));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 800; margin-bottom: 1.2rem;
+    }
+    .step-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: .5rem; }
+    .step-card p { color: var(--text-m); font-size: .9rem; line-height: 1.6; }
+
+    /* ============================================================
+       DASHBOARD / GOALS
+    ============================================================ */
+    #dashboard { background: var(--bg2); }
+    .dash-header {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;
+    }
+    .dash-tabs {
+      display: flex; gap: .5rem;
+      background: var(--bg3); border-radius: 12px; padding: .3rem;
+    }
+    .dash-tab {
+      padding: .5rem 1.2rem; border-radius: 9px; font-size: .9rem;
+      font-weight: 600; border: none; background: transparent;
+      color: var(--text-m); transition: all .2s;
+    }
+    .dash-tab.active {
+      background: var(--purple); color: #fff;
+      box-shadow: 0 4px 14px rgba(124,58,237,.4);
+    }
+    .dash-tab:hover:not(.active) { color: var(--text); background: rgba(255,255,255,.05); }
+
+    /* summary cards */
+    .summary-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem; margin-bottom: 2rem;
+    }
+    .summary-card {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 1.2rem 1.4rem;
+    }
+    .summary-card .s-label { font-size: .78rem; color: var(--text-d); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+    .summary-card .s-value { font-size: 1.8rem; font-weight: 800; margin-top: .3rem; }
+    .summary-card .s-value.green { color: var(--green-l); }
+    .summary-card .s-value.purple { color: var(--purple-l); }
+    .summary-card .s-value.red { color: var(--red); }
+    .summary-card .s-value.yellow { color: var(--yellow); }
+    .summary-card .s-sub { font-size: .78rem; color: var(--text-d); margin-top: .2rem; }
+
+    /* goal cards grid */
+    .goals-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.2rem;
+    }
+    .goal-card {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem;
+      transition: border-color .2s, transform .2s;
+      position: relative; overflow: hidden;
+    }
+    .goal-card:hover { border-color: rgba(124,58,237,.5); transform: translateY(-3px); }
+    .goal-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      border-radius: 3px 3px 0 0;
+    }
+    .goal-card.status-active::before { background: linear-gradient(90deg, var(--purple), var(--purple-l)); }
+    .goal-card.status-completed::before { background: linear-gradient(90deg, var(--green), var(--green-l)); }
+    .goal-card.status-failed::before { background: var(--red); }
+    .goal-card.status-danger::before { background: var(--yellow); }
+
+    .gc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+    .gc-category {
+      font-size: .72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .07em; padding: .25rem .7rem; border-radius: 99px;
+    }
+    .cat-study    { background: rgba(124,58,237,.2); color: var(--purple-l); }
+    .cat-fitness  { background: rgba(16,185,129,.2); color: var(--green-l); }
+    .cat-creative { background: rgba(245,158,11,.2); color: #fbbf24; }
+    .cat-work     { background: rgba(59,130,246,.2); color: #60a5fa; }
+    .cat-other    { background: rgba(156,163,175,.15); color: #9ca3af; }
+
+    .gc-stake {
+      font-size: 1.3rem; font-weight: 800; color: var(--yellow);
+      display: flex; align-items: center; gap: .3rem;
+      white-space: nowrap;
+    }
+    .gc-title { font-size: 1.05rem; font-weight: 700; margin-bottom: .4rem; line-height: 1.3; }
+    .gc-desc { font-size: .85rem; color: var(--text-m); line-height: 1.5; margin-bottom: 1.2rem; }
+
+    /* countdown */
+    .gc-countdown {
+      display: flex; gap: .5rem; margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+    }
+    .cd-unit {
+      flex: 1; min-width: 50px;
+      background: var(--bg2); border-radius: 8px; padding: .5rem .3rem;
+      text-align: center;
+    }
+    .cd-val { font-size: 1.3rem; font-weight: 800; line-height: 1; }
+    .cd-label { font-size: .62rem; color: var(--text-d); text-transform: uppercase; letter-spacing: .05em; margin-top: .2rem; }
+    .cd-danger .cd-val { color: var(--red); }
+    .cd-warn .cd-val { color: var(--yellow); }
+    .cd-ok .cd-val { color: var(--purple-l); }
+
+    /* progress bar */
+    .gc-progress-wrap { margin-bottom: 1rem; }
+    .gc-progress-label { display: flex; justify-content: space-between; font-size: .78rem; color: var(--text-m); margin-bottom: .4rem; }
+    .gc-progress-bar { height: 6px; background: var(--bg2); border-radius: 99px; overflow: hidden; }
+    .gc-progress-fill { height: 100%; border-radius: 99px; transition: width .5s ease; }
+    .fill-purple { background: linear-gradient(90deg, var(--purple), var(--purple-l)); }
+    .fill-green  { background: linear-gradient(90deg, var(--green), var(--green-l)); }
+    .fill-red    { background: var(--red); }
+    .fill-yellow { background: var(--yellow); }
+
+    /* charity & creator */
+    .gc-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .gc-charity { font-size: .78rem; color: var(--text-d); display: flex; align-items: center; gap: .3rem; }
+    .gc-creator { font-size: .78rem; color: var(--text-d); display: flex; align-items: center; gap: .3rem; }
+
+    /* ai message */
+    .gc-ai {
+      background: rgba(124,58,237,.1); border: 1px solid rgba(124,58,237,.2);
+      border-radius: var(--radius-sm); padding: .75rem 1rem;
+      font-size: .82rem; color: var(--purple-l); line-height: 1.5;
+      display: flex; gap: .6rem; align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+    .gc-ai i { margin-top: .1rem; flex-shrink: 0; }
+
+    /* goal actions */
+    .gc-actions { display: flex; gap: .5rem; }
+    .gc-btn {
+      flex: 1; padding: .55rem; border-radius: 8px; font-size: .82rem;
+      font-weight: 600; border: none; transition: all .15s;
+    }
+    .gc-btn-complete { background: rgba(16,185,129,.15); color: var(--green-l); }
+    .gc-btn-complete:hover { background: rgba(16,185,129,.3); }
+    .gc-btn-checkin { background: rgba(124,58,237,.15); color: var(--purple-l); }
+    .gc-btn-checkin:hover { background: rgba(124,58,237,.3); }
+    .gc-btn-abandon { background: rgba(239,68,68,.1); color: var(--red); }
+    .gc-btn-abandon:hover { background: rgba(239,68,68,.2); }
+
+    /* empty state */
+    .empty-state {
+      text-align: center; padding: 5rem 2rem;
+      color: var(--text-d);
+    }
+    .empty-state .empty-icon { font-size: 3.5rem; margin-bottom: 1rem; }
+    .empty-state h3 { font-size: 1.3rem; font-weight: 700; color: var(--text-m); margin-bottom: .5rem; }
+    .empty-state p { font-size: .9rem; margin-bottom: 1.5rem; }
+
+    /* ============================================================
+       PUBLIC BOARD
+    ============================================================ */
+    #public-board { background: var(--bg); }
+    .board-filters {
+      display: flex; gap: .6rem; flex-wrap: wrap; margin-bottom: 2rem;
+    }
+    .board-filter {
+      padding: .4rem 1rem; border-radius: 99px; font-size: .82rem;
+      font-weight: 600; border: 1px solid var(--border);
+      background: transparent; color: var(--text-m);
+      transition: all .2s;
+    }
+    .board-filter.active, .board-filter:hover {
+      background: var(--purple); border-color: var(--purple); color: #fff;
+    }
+    .board-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.2rem;
+    }
+
+    /* ============================================================
+       LEADERBOARD
+    ============================================================ */
+    #leaderboard { background: var(--bg2); }
+    .lb-table { width: 100%; border-collapse: collapse; }
+    .lb-table th {
+      text-align: left; font-size: .78rem; text-transform: uppercase;
+      letter-spacing: .07em; color: var(--text-d); font-weight: 600;
+      padding: .7rem 1rem; border-bottom: 1px solid var(--border);
+    }
+    .lb-table td { padding: .85rem 1rem; border-bottom: 1px solid rgba(255,255,255,.04); font-size: .9rem; }
+    .lb-table tr:last-child td { border-bottom: none; }
+    .lb-table tr:hover td { background: rgba(255,255,255,.02); }
+    .lb-rank { font-weight: 800; font-size: 1rem; }
+    .lb-rank.gold { color: #f59e0b; }
+    .lb-rank.silver { color: #94a3b8; }
+    .lb-rank.bronze { color: #b45309; }
+    .lb-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; font-weight: 700;
+    }
+    .lb-user { display: flex; align-items: center; gap: .8rem; }
+    .lb-badge {
+      background: rgba(16,185,129,.15); color: var(--green-l);
+      font-size: .72rem; font-weight: 700; padding: .2rem .6rem;
+      border-radius: 99px;
+    }
+    .lb-badge.purple { background: rgba(124,58,237,.15); color: var(--purple-l); }
+
+    /* ============================================================
+       MODAL
+    ============================================================ */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,.75); backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem;
+      opacity: 0; pointer-events: none; transition: opacity .25s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 20px; padding: 2rem; width: 100%; max-width: 520px;
+      max-height: 90vh; overflow-y: auto;
+      transform: translateY(30px) scale(.97);
+      transition: transform .25s ease;
+    }
+    .modal-overlay.open .modal { transform: none; }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1.8rem;
+    }
+    .modal-title { font-size: 1.3rem; font-weight: 800; }
+    .modal-close {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--bg3); border: none; color: var(--text-m);
+      font-size: 1rem; display: flex; align-items: center; justify-content: center;
+      transition: background .2s, color .2s;
+    }
+    .modal-close:hover { background: var(--red); color: #fff; }
+
+    .form-group { margin-bottom: 1.3rem; }
+    .form-label {
+      display: block; font-size: .82rem; font-weight: 600;
+      color: var(--text-m); margin-bottom: .5rem;
+    }
+    .form-input, .form-textarea, .form-select {
+      width: 100%; background: var(--bg3);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text); padding: .75rem 1rem;
+      outline: none; transition: border-color .2s;
+    }
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      border-color: var(--purple);
+    }
+    .form-textarea { resize: vertical; min-height: 80px; }
+    .form-select option { background: var(--bg2); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* stake slider */
+    .stake-display {
+      text-align: center; padding: .8rem;
+      background: var(--bg3); border-radius: var(--radius-sm);
+      margin-bottom: .5rem;
+    }
+    .stake-amount {
+      font-size: 2.5rem; font-weight: 900; color: var(--yellow);
+    }
+    .stake-sub { font-size: .78rem; color: var(--text-d); }
+    input[type=range] {
+      width: 100%; accent-color: var(--purple);
+      height: 6px; cursor: pointer;
+    }
+    .stake-marks {
+      display: flex; justify-content: space-between;
+      font-size: .72rem; color: var(--text-d); margin-top: .3rem;
+    }
+    .charity-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: .5rem; margin-top: .5rem;
+    }
+    .charity-opt {
+      padding: .65rem .9rem; border-radius: var(--radius-sm);
+      border: 1px solid var(--border); background: var(--bg3);
+      font-size: .82rem; font-weight: 500; color: var(--text-m);
+      transition: all .2s; cursor: pointer; text-align: center;
+    }
+    .charity-opt.selected, .charity-opt:hover {
+      border-color: var(--purple); color: var(--purple-l);
+      background: rgba(124,58,237,.1);
+    }
+    .form-submit {
+      width: 100%; padding: .9rem;
+      background: linear-gradient(135deg, var(--purple), var(--purple-l));
+      border: none; border-radius: var(--radius-sm);
+      color: #fff; font-size: 1rem; font-weight: 700;
+      transition: opacity .2s, transform .15s;
+      box-shadow: 0 8px 25px rgba(124,58,237,.4);
+    }
+    .form-submit:hover { opacity: .9; transform: translateY(-2px); }
+
+    /* ============================================================
+       TOAST
+    ============================================================ */
+    #toast-container {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 999;
+      display: flex; flex-direction: column; gap: .6rem;
+    }
+    .toast {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: .9rem 1.3rem;
+      font-size: .9rem; display: flex; align-items: center; gap: .7rem;
+      box-shadow: var(--shadow); min-width: 260px;
+      animation: slideRight .3s ease;
+    }
+    .toast.success { border-left: 3px solid var(--green); }
+    .toast.error   { border-left: 3px solid var(--red); }
+    .toast.info    { border-left: 3px solid var(--purple-l); }
+    .toast i { font-size: 1rem; }
+    .toast.success i { color: var(--green); }
+    .toast.error   i { color: var(--red); }
+    .toast.info    i { color: var(--purple-l); }
+
+    /* ============================================================
+       CHECKIN MODAL
+    ============================================================ */
+    .checkin-options { display: grid; grid-template-columns: repeat(3,1fr); gap: .7rem; }
+    .checkin-opt {
+      padding: 1rem .5rem; border-radius: var(--radius-sm);
+      border: 1px solid var(--border); background: var(--bg3);
+      text-align: center; cursor: pointer; transition: all .2s;
+    }
+    .checkin-opt .co-icon { font-size: 1.6rem; margin-bottom: .3rem; }
+    .checkin-opt .co-label { font-size: .78rem; font-weight: 600; color: var(--text-m); }
+    .checkin-opt.selected, .checkin-opt:hover {
+      border-color: var(--purple); background: rgba(124,58,237,.1);
+    }
+    .checkin-opt.selected .co-label { color: var(--purple-l); }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: var(--bg2); border-top: 1px solid var(--border);
+      padding: 3rem 2rem; text-align: center;
+    }
+    .footer-logo { font-size: 1.4rem; font-weight: 800; margin-bottom: .5rem; }
+    .footer-logo span { color: var(--purple-l); }
+    footer p { color: var(--text-d); font-size: .85rem; line-height: 1.7; }
+    .footer-links {
+      display: flex; gap: 1.5rem; justify-content: center;
+      margin: 1.2rem 0; flex-wrap: wrap;
+    }
+    .footer-links a { color: var(--text-d); font-size: .85rem; transition: color .2s; }
+    .footer-links a:hover { color: var(--purple-l); }
+
+    /* ============================================================
+       ANIMATIONS
+    ============================================================ */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-18px); }
+      to   { opacity: 1; transform: none; }
+    }
+    @keyframes bounce {
+      0%,100% { transform: translateX(-50%) translateY(0); }
+      50%      { transform: translateX(-50%) translateY(8px); }
+    }
+    @keyframes slideRight {
+      from { opacity: 0; transform: translateX(20px); }
+      to   { opacity: 1; transform: none; }
+    }
+    @keyframes pulse-ring {
+      0%   { transform: scale(.9); opacity: .8; }
+      100% { transform: scale(1.3); opacity: 0; }
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 680px) {
+      nav { padding: .9rem 1.2rem; }
+      .nav-links { display: none; }
+      .form-row { grid-template-columns: 1fr; }
+      .hero-stats { gap: 1.5rem; }
+      .charity-grid { grid-template-columns: 1fr; }
+      .checkin-options { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     NAV
+============================================================ -->
+<nav>
+  <div class="nav-logo">
+    <div class="logo-icon">⚡</div>
+    Procrasti<span>Mate</span>
+  </div>
+  <div class="nav-links">
+    <a href="#how-it-works">How it works</a>
+    <a href="#dashboard">My Goals</a>
+    <a href="#public-board">Public Board</a>
+    <a href="#leaderboard">Leaderboard</a>
+  </div>
+  <button class="nav-cta" onclick="openModal()">+ New Goal</button>
+</nav>
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+
+  <div class="hero-badge">
+    <i class="fa-solid fa-bolt"></i>
+    AI Accountability Partner — Finally, One That Works
+  </div>
+
+  <h1>
+    <span class="grad">Stop Procrastinating.</span><br/>
+    <span class="grad-green">Or Pay The Price.</span>
+  </h1>
+
+  <p class="hero-sub">
+    Set a goal. Stake real money. Get an AI accountability partner that has zero chill.
+    Complete it — or your cash goes to charity. No excuses. No extensions. No mercy.
+  </p>
+
+  <div class="hero-actions">
+    <button class="btn-primary" onclick="openModal()">
+      <i class="fa-solid fa-fire"></i> Stake Your Goal
+    </button>
+    <a class="btn-secondary" href="#how-it-works">
+      <i class="fa-solid fa-circle-play"></i> See How It Works
+    </a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="val" id="stat-goals">847</div>
+      <div class="lbl">Active Goals</div>
+    </div>
+    <div class="hero-stat">
+      <div class="val" id="stat-donated">$12,340</div>
+      <div class="lbl">Donated to Charity</div>
+    </div>
+    <div class="hero-stat">
+      <div class="val" id="stat-completed">2,194</div>
+      <div class="lbl">Goals Completed</div>
+    </div>
+    <div class="hero-stat">
+      <div class="val">73%</div>
+      <div class="lbl">Completion Rate</div>
+    </div>
+  </div>
+
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+    <i class="fa-solid fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- ============================================================
+     HOW IT WORKS
+============================================================ -->
+<section class="section" id="how-it-works">
+  <div class="section-inner">
+    <div class="section-tag">The System</div>
+    <h2 class="section-title">How ProcrastiMate Works</h2>
+    <p class="section-sub">Four brutally simple steps between you and actually finishing something for once.</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3>Declare Your Goal</h3>
+        <p>Be specific. "Study 3 chapters" not "study more." Vague goals fail. Specific ones stick.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3>Stake Real Money</h3>
+        <p>Choose $5 to $500. The more you stake, the more you care. Your brain responds to loss differently than gain.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3>AI Keeps You Honest</h3>
+        <p>Your ProcrastiMate AI sends nudges, check-in reminders, and zero-sympathy reality checks when you slack off.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <h3>Complete or Donate</h3>
+        <p>Mark it done by the deadline → money back. Miss it → your chosen charity gets the cash. Public record keeps it real.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     DASHBOARD
+============================================================ -->
+<section class="section" id="dashboard">
+  <div class="section-inner">
+    <div class="dash-header">
+      <div>
+        <div class="section-tag purple">My Goals</div>
+        <h2 class="section-title" style="margin-bottom:0">Your Dashboard</h2>
+      </div>
+      <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
+        <div class="dash-tabs">
+          <button class="dash-tab active" onclick="filterGoals('all',this)">All</button>
+          <button class="dash-tab" onclick="filterGoals('active',this)">Active</button>
+          <button class="dash-tab" onclick="filterGoals('completed',this)">Done ✓</button>
+          <button class="dash-tab" onclick="filterGoals('failed',this)">Failed</button>
+        </div>
+        <button class="btn-primary" onclick="openModal()" style="padding:.65rem 1.4rem;font-size:.9rem;">
+          <i class="fa-solid fa-plus"></i> New Goal
+        </button>
+      </div>
+    </div>
+
+    <!-- summary -->
+    <div class="summary-row" id="summary-row"></div>
+
+    <!-- goal cards -->
+    <div class="goals-grid" id="goals-grid"></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PUBLIC BOARD
+============================================================ -->
+<section class="section" id="public-board">
+  <div class="section-inner">
+    <div class="section-tag">Community</div>
+    <h2 class="section-title">Public Goal Board</h2>
+    <p class="section-sub">Everyone's bets are public. The accountability is mutual. Cheer them on — or watch them donate.</p>
+
+    <div class="board-filters" style="margin-top:1.5rem;">
+      <button class="board-filter active" onclick="filterBoard('all',this)">🔥 All</button>
+      <button class="board-filter" onclick="filterBoard('study',this)">📚 Study</button>
+      <button class="board-filter" onclick="filterBoard('fitness',this)">💪 Fitness</button>
+      <button class="board-filter" onclick="filterBoard('creative',this)">🎨 Creative</button>
+      <button class="board-filter" onclick="filterBoard('work',this)">💼 Work</button>
+    </div>
+
+    <div class="board-grid" id="board-grid"></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     LEADERBOARD
+============================================================ -->
+<section class="section" id="leaderboard">
+  <div class="section-inner">
+    <div class="section-tag">Hall of Fame</div>
+    <h2 class="section-title">Leaderboard</h2>
+    <p class="section-sub">The most committed goal-crushers this month.</p>
+
+    <div style="margin-top:2rem;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+      <table class="lb-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>User</th>
+            <th>Goals Won</th>
+            <th>Streak</th>
+            <th>Staked</th>
+            <th>Badge</th>
+          </tr>
+        </thead>
+        <tbody id="lb-body"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer>
+  <div class="footer-logo">Procrasti<span>Mate</span></div>
+  <div class="footer-links">
+    <a href="#">About</a>
+    <a href="#">Pricing</a>
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Contact</a>
+  </div>
+  <p>Built for chronic procrastinators who are finally done being chronic procrastinators.<br/>
+  Donations handled securely. Money never lies. Neither does your deadline.</p>
+</footer>
+
+<!-- ============================================================
+     CREATE GOAL MODAL
+============================================================ -->
+<div class="modal-overlay" id="goal-modal" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">⚡ Stake a New Goal</div>
+      <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <form onsubmit="createGoal(event)">
+      <div class="form-group">
+        <label class="form-label">Goal Title *</label>
+        <input class="form-input" id="g-title" placeholder="e.g. Finish Chapter 5 & 6 of Calculus" required maxlength="80"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description (optional)</label>
+        <textarea class="form-textarea" id="g-desc" placeholder="Add context, sub-tasks, or what success looks like..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select" id="g-cat">
+            <option value="study">📚 Study</option>
+            <option value="fitness">💪 Fitness</option>
+            <option value="creative">🎨 Creative</option>
+            <option value="work">💼 Work</option>
+            <option value="other">🎯 Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Deadline *</label>
+          <input class="form-input" id="g-deadline" type="datetime-local" required/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Your Stake 💰</label>
+        <div class="stake-display">
+          <div class="stake-amount">$<span id="stake-val">25</span></div>
+          <div class="stake-sub">If you fail, this goes to your chosen charity</div>
+        </div>
+        <input type="range" id="g-stake" min="5" max="500" value="25" step="5"
+               oninput="document.getElementById('stake-val').textContent=this.value"/>
+        <div class="stake-marks">
+          <span>$5</span><span>$100</span><span>$250</span><span>$500</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Choose Your Charity (if you fail)</label>
+        <div class="charity-grid" id="charity-grid">
+          <div class="charity-opt selected" onclick="selectCharity(this,'Red Cross')">🏥 Red Cross</div>
+          <div class="charity-opt" onclick="selectCharity(this,'WWF')">🐼 WWF</div>
+          <div class="charity-opt" onclick="selectCharity(this,'UNICEF')">🧒 UNICEF</div>
+          <div class="charity-opt" onclick="selectCharity(this,'Local Food Bank')">🥫 Food Bank</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Your Name / Username</label>
+        <input class="form-input" id="g-name" placeholder="e.g. Alex M. (shown publicly)" maxlength="30"/>
+      </div>
+
+      <button type="submit" class="form-submit">
+        <i class="fa-solid fa-fire"></i> Stake It — I'm Committed
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ============================================================
+     CHECKIN MODAL
+============================================================ -->
+<div class="modal-overlay" id="checkin-modal" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📊 Progress Check-in</div>
+      <button class="modal-close" onclick="closeCheckinModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <p style="color:var(--text-m);font-size:.9rem;margin-bottom:1.5rem;">
+      How's it going with: <strong id="checkin-goal-title" style="color:var(--text)"></strong>?
+    </p>
+    <div class="checkin-options" id="checkin-options"></div>
+    <div style="margin-top:1.5rem;">
+      <label class="form-label">Drop a note (optional)</label>
+      <textarea class="form-textarea" id="checkin-note" placeholder="What did you work on? What's blocking you?"></textarea>
+    </div>
+    <button class="form-submit" style="margin-top:1rem;" onclick="submitCheckin()">
+      <i class="fa-solid fa-paper-plane"></i> Submit Check-in
+    </button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast-container"></div>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+/* ================================================
+   DATA & STORAGE
+================================================ */
+const STORAGE_KEY = 'procrastimate_goals_v2';
+
+const AI_MESSAGES = {
+  active: [
+    "🤖 Clock's ticking. Every second you spend not working is a second closer to donating.",
+    "🤖 Your past self set this goal. Your future self will thank you. Don't let both of them down.",
+    "🤖 Statistically, people who check in daily are 3x more likely to succeed. Just saying.",
+    "🤖 You staked real money on this. That's either brilliant motivation or expensive procrastination.",
+    "🤖 Break it into 25-minute blocks. You can do anything for 25 minutes.",
+  ],
+  danger: [
+    "🚨 ALERT: Less than 24 hours left. Your charity is literally waiting for your money.",
+    "🚨 This is not a drill. You are about to lose money to charity. MOVE.",
+    "🚨 Emergency mode activated. Drop everything else. Do. The. Goal.",
+    "🚨 I've sent you 6 gentle reminders. Gentle time is over. GET. TO. WORK.",
+  ],
+  completed: [
+    "🎉 YOU ACTUALLY DID IT. I doubted you. I apologize. You're incredible.",
+    "✅ Goal crushed. Money saved. Self-respect preserved. This is what winning feels like.",
+    "🏆 COMPLETED! You beat procrastination. Take a moment to feel this — then set the next goal.",
+  ],
+  failed: [
+    "💸 Failure happens. But your money went to a good cause. Set a new goal — better deadline this time.",
+    "📚 Failure is data. What went wrong? Set a new goal with that lesson baked in.",
+  ]
+};
+
+const CHARITIES = ['Red Cross','WWF','UNICEF','Local Food Bank'];
+const CATEGORIES = { study:'cat-study', fitness:'cat-fitness', creative:'cat-creative', work:'cat-work', other:'cat-other' };
+const CAT_EMOJI = { study:'📚', fitness:'💪', creative:'🎨', work:'💼', other:'🎯' };
+
+let goals = [];
+let selectedCharity = 'Red Cross';
+let activeCheckinId = null;
+let currentFilter = 'all';
+let boardFilter = 'all';
+
+function loadGoals() {
+  try { goals = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e) { goals = []; }
+  seedDemoGoals();
+}
+function saveGoals() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(goals));
+}
+
+function seedDemoGoals() {
+  if (goals.length > 0) return;
+  const now = Date.now();
+  const h = 3600000, d = 86400000;
+  goals = [
+    { id: 'demo1', title: 'Finish Calculus Chapters 5 & 6', desc: 'Practice problems included. At least 2 past papers.', category: 'study', deadline: now + 2*d, stake: 50, charity: 'UNICEF', creator: 'Alex M.', status: 'active', progress: 40, checkins: 2, createdAt: now - d, aiIdx: 0 },
+    { id: 'demo2', title: 'Run 5km without stopping', desc: 'No walking allowed. Track on Strava.', category: 'fitness', deadline: now + 18*h, stake: 30, charity: 'Red Cross', creator: 'Jordan K.', status: 'active', progress: 65, checkins: 4, createdAt: now - 2*d, aiIdx: 1 },
+    { id: 'demo3', title: 'Ship landing page for SaaS', desc: 'Fully responsive. Live on Vercel. Shared on Twitter.', category: 'work', deadline: now + 5*d, stake: 100, charity: 'WWF', creator: 'Sam R.', status: 'active', progress: 20, checkins: 1, createdAt: now - 12*h, aiIdx: 2 },
+    { id: 'demo4', title: 'Write 1000-word short story', desc: 'Must have a twist ending. Submit to writing group.', category: 'creative', deadline: now - 2*h, stake: 25, charity: 'Local Food Bank', creator: 'Riley T.', status: 'completed', progress: 100, checkins: 6, createdAt: now - 5*d, aiIdx: 0 },
+    { id: 'demo5', title: 'Read "Deep Work" cover to cover', desc: 'Take notes on each chapter.', category: 'study', deadline: now - 1*d, stake: 40, charity: 'UNICEF', creator: 'Casey B.', status: 'failed', progress: 45, checkins: 3, createdAt: now - 7*d, aiIdx: 1 },
+  ];
+  saveGoals();
+}
+
+/* ================================================
+   MODAL
+================================================ */
+function openModal() {
+  const modal = document.getElementById('goal-modal');
+  modal.classList.add('open');
+  // set min datetime to now
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  document.getElementById('g-deadline').min = now.toISOString().slice(0,16);
+  // default deadline: 7 days from now
+  const def = new Date(Date.now() + 7*86400000);
+  def.setMinutes(def.getMinutes() - def.getTimezoneOffset());
+  document.getElementById('g-deadline').value = def.toISOString().slice(0,16);
+}
+function closeModal() {
+  document.getElementById('goal-modal').classList.remove('open');
+}
+function handleOverlayClick(e) {
+  if (e.target.classList.contains('modal-overlay')) {
+    e.currentTarget.classList.remove('open');
+  }
+}
+function selectCharity(el, name) {
+  document.querySelectorAll('.charity-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedCharity = name;
+}
+
+/* ================================================
+   CREATE GOAL
+================================================ */
+function uid() { return 'g_' + Math.random().toString(36).slice(2,10); }
+
+function createGoal(e) {
+  e.preventDefault();
+  const title    = document.getElementById('g-title').value.trim();
+  const desc     = document.getElementById('g-desc').value.trim();
+  const category = document.getElementById('g-cat').value;
+  const deadline = new Date(document.getElementById('g-deadline').value).getTime();
+  const stake    = parseInt(document.getElementById('g-stake').value);
+  const creator  = document.getElementById('g-name').value.trim() || 'Anonymous';
+
+  if (!title || !deadline) return;
+  if (deadline <= Date.now()) { showToast('Deadline must be in the future!','error'); return; }
+
+  const goal = {
+    id: uid(), title, desc, category, deadline, stake,
+    charity: selectedCharity, creator, status: 'active',
+    progress: 0, checkins: 0, createdAt: Date.now(), aiIdx: 0
+  };
+
+  goals.unshift(goal);
+  saveGoals();
+  closeModal();
+  renderDashboard();
+  renderPublicBoard();
+  updateStats();
+  showToast(`"${title.slice(0,30)}..." staked for $${stake}! 🔥`, 'success');
+
+  // reset form
+  document.getElementById('g-title').value = '';
+  document.getElementById('g-desc').value  = '';
+  document.getElementById('g-name').value  = '';
+  document.getElementById('g-stake').value = 25;
+  document.getElementById('stake-val').textContent = '25';
+}
+
+/* ================================================
+   COMPLETE / ABANDON
+================================================ */
+function completeGoal(id) {
+  const g = goals.find(x => x.id === id);
+  if (!g) return;
+  g.status = 'completed'; g.progress = 100;
+  saveGoals(); renderDashboard(); renderPublicBoard(); updateStats();
+  showToast(`Goal completed! 🎉 $${g.stake} stays in your pocket!`, 'success');
+}
+function abandonGoal(id) {
+  const g = goals.find(x => x.id === id);
+  if (!g) return;
+  if (!confirm(`Are you sure you want to abandon "${g.title}"?\n$${g.stake} will be donated to ${g.charity}.`)) return;
+  g.status = 'failed';
+  saveGoals(); renderDashboard(); renderPublicBoard(); updateStats();
+  showToast(`$${g.stake} donated to ${g.charity}. Set a new goal. 💸`, 'error');
+}
+
+/* ================================================
+   CHECK-IN
+================================================ */
+const CHECKIN_OPTS = [
+  { icon:'🚀', label:'Crushing it' , pct: 90 },
+  { icon:'💪', label:'Good progress', pct: 65 },
+  { icon:'😅', label:'Getting there', pct: 40 },
+  { icon:'😬', label:'Struggling',    pct: 20 },
+  { icon:'🔥', label:'Just started', pct: 10 },
+  { icon:'😴', label:'Not started',  pct: 5  },
+];
+let selectedCheckinOpt = null;
+
+function openCheckinModal(id) {
+  const g = goals.find(x => x.id === id);
+  if (!g) return;
+  activeCheckinId = id;
+  selectedCheckinOpt = null;
+  document.getElementById('checkin-goal-title').textContent = g.title;
+  document.getElementById('checkin-note').value = '';
+  const wrap = document.getElementById('checkin-options');
+  wrap.innerHTML = CHECKIN_OPTS.map((o,i) => `
+    <div class="checkin-opt" onclick="selectCheckinOpt(this,${i})">
+      <div class="co-icon">${o.icon}</div>
+      <div class="co-label">${o.label}</div>
+    </div>`).join('');
+  document.getElementById('checkin-modal').classList.add('open');
+}
+function selectCheckinOpt(el, idx) {
+  document.querySelectorAll('.checkin-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedCheckinOpt = idx;
+}
+function closeCheckinModal() {
+  document.getElementById('checkin-modal').classList.remove('open');
+}
+function submitCheckin() {
+  if (selectedCheckinOpt === null) { showToast('Please select a progress option','error'); return; }
+  const g = goals.find(x => x.id === activeCheckinId);
+  if (!g) return;
+  g.progress = Math.max(g.progress, CHECKIN_OPTS[selectedCheckinOpt].pct);
+  g.checkins = (g.checkins || 0) + 1;
+  g.aiIdx = (g.aiIdx + 1) % AI_MESSAGES.active.length;
+  saveGoals(); renderDashboard(); closeCheckinModal();
+  showToast('Check-in recorded! Keep going 💪', 'info');
+}
+
+/* ================================================
+   COUNTDOWN
+================================================ */
+function getCountdown(deadline) {
+  const diff = deadline - Date.now();
+  if (diff <= 0) return { days:0, hours:0, mins:0, secs:0, expired: true };
+  const secs  = Math.floor(diff/1000) % 60;
+  const mins  = Math.floor(diff/60000) % 60;
+  const hours = Math.floor(diff/3600000) % 24;
+  const days  = Math.floor(diff/86400000);
+  return { days, hours, mins, secs, expired: false };
+}
+function getCountdownClass(deadline) {
+  const diff = deadline - Date.now();
+  if (diff < 86400000)  return 'cd-danger';
+  if (diff < 3*86400000) return 'cd-warn';
+  return 'cd-ok';
+}
+function getGoalStatus(g) {
+  if (g.status === 'completed') return 'completed';
+  if (g.status === 'failed')    return 'failed';
+  if (g.deadline < Date.now())  return 'failed';
+  const diff = g.deadline - Date.now();
+  if (diff < 86400000) return 'danger';
+  return 'active';
+}
+
+/* ================================================
+   RENDER GOAL CARD
+================================================ */
+function renderGoalCard(g, public_mode=false) {
+  const status = getGoalStatus(g);
+  const cd = getCountdown(g.deadline);
+  const cdClass = getCountdownClass(g.deadline);
+  const catClass = CATEGORIES[g.category] || 'cat-other';
+  const catEmoji = CAT_EMOJI[g.category] || '🎯';
+
+  let aiMsg = '';
+  if (status === 'active')    aiMsg = AI_MESSAGES.active[g.aiIdx % AI_MESSAGES.active.length];
+  if (status === 'danger')    aiMsg = AI_MESSAGES.danger[g.aiIdx % AI_MESSAGES.danger.length];
+  if (status === 'completed') aiMsg = AI_MESSAGES.completed[0];
+  if (status === 'failed')    aiMsg = AI_MESSAGES.failed[0];
+
+  const progressFill = status === 'completed' ? 'fill-green' :
+                       status === 'failed'    ? 'fill-red'   :
+                       status === 'danger'    ? 'fill-yellow' : 'fill-purple';
+
+  const countdownHTML = status === 'completed'
+    ? `<div style="text-align:center;color:var(--green-l);font-weight:700;font-size:1.1rem;padding:.6rem 0;">✅ COMPLETED</div>`
+    : status === 'failed'
+    ? `<div style="text-align:center;color:var(--red);font-weight:700;font-size:1.1rem;padding:.6rem 0;">💸 FAILED — Donated to ${g.charity}</div>`
+    : `<div class="gc-countdown">
+        <div class="cd-unit ${cdClass}"><div class="cd-val">${cd.days}</div><div class="cd-label">Days</div></div>
+        <div class="cd-unit ${cdClass}"><div class="cd-val">${String(cd.hours).padStart(2,'0')}</div><div class="cd-label">Hours</div></div>
+        <div class="cd-unit ${cdClass}"><div class="cd-val">${String(cd.mins).padStart(2,'0')}</div><div class="cd-label">Mins</div></div>
+        <div class="cd-unit ${cdClass}"><div class="cd-val">${String(cd.secs).padStart(2,'0')}</div><div class="cd-label">Secs</div></div>
+       </div>`;
+
+  const actionsHTML = public_mode ? `
+    <div class="gc-actions">
+      <button class="gc-btn" style="background:rgba(255,255,255,.05);color:var(--text-m);" onclick="cheerGoal('${g.id}',this)">
+        <i class="fa-solid fa-hands-clapping"></i> Cheer
+      </button>
+    </div>` : status === 'completed' ? `
+    <div class="gc-actions">
+      <button class="gc-btn" style="background:rgba(16,185,129,.1);color:var(--green-l);" disabled>✅ Completed</button>
+    </div>` : status === 'failed' ? `
+    <div class="gc-actions">
+      <button class="gc-btn btn-primary" onclick="openModal()" style="border-radius:8px;padding:.55rem;font-size:.82rem;">🔄 Set New Goal</button>
+    </div>` : `
+    <div class="gc-actions">
+      <button class="gc-btn gc-btn-complete" onclick="completeGoal('${g.id}')">✅ Done!</button>
+      <button class="gc-btn gc-btn-checkin" onclick="openCheckinModal('${g.id}')">📊 Check-in</button>
+      <button class="gc-btn gc-btn-abandon" onclick="abandonGoal('${g.id}')">❌ Quit</button>
+    </div>`;
+
+  return `
+    <div class="goal-card status-${status}" id="card-${g.id}">
+      <div class="gc-top">
+        <div class="gc-category ${catClass}">${catEmoji} ${g.category}</div>
+        <div class="gc-stake"><i class="fa-solid fa-sack-dollar" style="font-size:.9rem;"></i> $${g.stake}</div>
+      </div>
+      <div class="gc-title">${escHtml(g.title)}</div>
+      ${g.desc ? `<div class="gc-desc">${escHtml(g.desc)}</div>` : ''}
+      ${countdownHTML}
+      <div class="gc-progress-wrap">
+        <div class="gc-progress-label">
+          <span>Progress</span>
+          <span>${g.progress}%</span>
+        </div>
+        <div class="gc-progress-bar">
+          <div class="gc-progress-fill ${progressFill}" style="width:${g.progress}%"></div>
+        </div>
+      </div>
+      <div class="gc-meta">
+        <div class="gc-charity"><i class="fa-solid fa-heart" style="color:var(--red)"></i> ${g.charity}</div>
+        <div class="gc-creator"><i class="fa-solid fa-user"></i> ${escHtml(g.creator)} · ${g.checkins} check-ins</div>
+      </div>
+      <div class="gc-ai"><i class="fa-solid fa-robot"></i><span>${aiMsg}</span></div>
+      ${actionsHTML}
+    </div>`;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ================================================
+   CHEER
+================================================ */
+function cheerGoal(id, btn) {
+  btn.innerHTML = `<i class="fa-solid fa-hands-clapping"></i> Cheered! 🎉`;
+  btn.style.background = 'rgba(16,185,129,.15)';
+  btn.style.color = 'var(--green-l)';
+  btn.disabled = true;
+  showToast('You cheered someone on! Keep the energy up 🔥','info');
+}
+
+/* ================================================
+   DASHBOARD RENDER
+================================================ */
+function filterGoals(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderDashboard();
+}
+
+function renderDashboard() {
+  checkExpiredGoals();
+
+  // summary
+  const active    = goals.filter(g => getGoalStatus(g) === 'active' || getGoalStatus(g) === 'danger').length;
+  const completed = goals.filter(g => g.status === 'completed').length;
+  const failed    = goals.filter(g => g.status === 'failed').length;
+  const staked    = goals.filter(g => g.status === 'active' || getGoalStatus(g) === 'danger').reduce((a,g) => a+g.stake, 0);
+
+  document.getElementById('summary-row').innerHTML = `
+    <div class="summary-card"><div class="s-label">Active</div><div class="s-value purple">${active}</div><div class="s-sub">goals in progress</div></div>
+    <div class="summary-card"><div class="s-label">Completed</div><div class="s-value green">${completed}</div><div class="s-sub">goals crushed</div></div>
+    <div class="summary-card"><div class="s-label">Failed</div><div class="s-value red">${failed}</div><div class="s-sub">donated to charity</div></div>
+    <div class="summary-card"><div class="s-label">At Stake</div><div class="s-value yellow">$${staked}</div><div class="s-sub">on the line right now</div></div>
+  `;
+
+  // filter
+  let filtered = goals;
+  if (currentFilter === 'active')    filtered = goals.filter(g => getGoalStatus(g) === 'active' || getGoalStatus(g) === 'danger');
+  if (currentFilter === 'completed') filtered = goals.filter(g => g.status === 'completed');
+  if (currentFilter === 'failed')    filtered = goals.filter(g => g.status === 'failed');
+
+  const grid = document.getElementById('goals-grid');
+  if (filtered.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <div class="empty-icon">🎯</div>
+        <h3>No goals here yet</h3>
+        <p>Set a goal and stake some money on it. Your future self is watching.</p>
+        <button class="btn-primary" onclick="openModal()"><i class="fa-solid fa-plus"></i> Create Your First Goal</button>
+      </div>`;
+    return;
+  }
+  grid.innerHTML = filtered.map(g => renderGoalCard(g)).join('');
+}
+
+/* ================================================
+   PUBLIC BOARD
+================================================ */
+function filterBoard(f, btn) {
+  boardFilter = f;
+  document.querySelectorAll('.board-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPublicBoard();
+}
+function renderPublicBoard() {
+  let filtered = goals.filter(g => g.status !== 'failed');
+  if (boardFilter !== 'all') filtered = filtered.filter(g => g.category === boardFilter);
+  const grid = document.getElementById('board-grid');
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🏜️</div><h3>No public goals in this category</h3><p>Be the first!</p></div>`;
+    return;
+  }
+  grid.innerHTML = filtered.map(g => renderGoalCard(g, true)).join('');
+}
+
+/* ================================================
+   LEADERBOARD
+================================================ */
+const LB_DATA = [
+  { name:'Sarah Chen',   goals:18, streak:14, staked:450, badge:'🏆 Legend',       color:'#fbbf24', bg:'rgba(251,191,36,.15)' },
+  { name:'Marcus J.',    goals:15, streak:12, staked:380, badge:'🔥 Streak King',   color:'#f87171', bg:'rgba(248,113,113,.12)' },
+  { name:'Priya Sharma', goals:12, streak: 9, staked:290, badge:'⚡ Finisher',      color:'var(--purple-l)', bg:'rgba(124,58,237,.15)' },
+  { name:'Tom Blake',    goals:10, streak: 7, staked:200, badge:'💪 Consistent',    color:'var(--green-l)',  bg:'rgba(16,185,129,.12)' },
+  { name:'Yuki T.',      goals: 8, streak: 5, staked:160, badge:'🎯 On Track',      color:'#60a5fa', bg:'rgba(59,130,246,.12)' },
+  { name:'Alex M.',      goals: 6, streak: 3, staked:120, badge:'🌱 Rising',        color:'#86efac', bg:'rgba(16,185,129,.1)'  },
+];
+const RANK_COLORS = ['gold','silver','bronze'];
+function renderLeaderboard() {
+  const body = document.getElementById('lb-body');
+  body.innerHTML = LB_DATA.map((u,i) => {
+    const rankClass = RANK_COLORS[i] || '';
+    const rankIcon  = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
+    const initials  = u.name.split(' ').map(w=>w[0]).join('').slice(0,2);
+    const avatarColors = ['#7c3aed','#10b981','#f59e0b','#3b82f6','#ec4899','#14b8a6'];
+    return `<tr>
+      <td><span class="lb-rank ${rankClass}">${rankIcon}</span></td>
+      <td>
+        <div class="lb-user">
+          <div class="lb-avatar" style="background:${avatarColors[i%avatarColors.length]}">${initials}</div>
+          <strong>${escHtml(u.name)}</strong>
+        </div>
+      </td>
+      <td><strong>${u.goals}</strong></td>
+      <td>🔥 ${u.streak} days</td>
+      <td>$${u.staked}</td>
+      <td><span class="lb-badge ${i < 3 ? 'purple' : ''}">${u.badge}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ================================================
+   AUTO-EXPIRE GOALS
+================================================ */
+function checkExpiredGoals() {
+  let changed = false;
+  goals.forEach(g => {
+    if (g.status === 'active' && g.deadline < Date.now()) {
+      g.status = 'failed'; changed = true;
+    }
+  });
+  if (changed) saveGoals();
+}
+
+/* ================================================
+   LIVE COUNTDOWN TICKER
+================================================ */
+function tickCountdowns() {
+  document.querySelectorAll('.goal-card.status-active, .goal-card.status-danger').forEach(card => {
+    const id = card.id.replace('card-','');
+    const g  = goals.find(x => x.id === id);
+    if (!g) return;
+    const cd = getCountdown(g.deadline);
+    const cdClass = getCountdownClass(g.deadline);
+    const units = card.querySelectorAll('.cd-unit');
+    if (!units.length) return;
+    const vals = [cd.days, String(cd.hours).padStart(2,'0'), String(cd.mins).padStart(2,'0'), String(cd.secs).padStart(2,'0')];
+    units.forEach((u,i) => {
+      u.className = `cd-unit ${cdClass}`;
+      u.querySelector('.cd-val').textContent = vals[i];
+    });
+    if (cd.expired) { renderDashboard(); renderPublicBoard(); }
+  });
+}
+
+/* ================================================
+   STATS ANIMATION
+================================================ */
+function updateStats() {
+  const activeCount = goals.filter(g => g.status === 'active').length + 847;
+  const completedCount = goals.filter(g => g.status === 'completed').length + 2194;
+  const failed = goals.filter(g => g.status === 'failed');
+  const donated = failed.reduce((a,g) => a + g.stake, 12340);
+  animateCount('stat-goals', activeCount);
+  animateCount('stat-completed', completedCount);
+  document.getElementById('stat-donated').textContent = '$' + donated.toLocaleString();
+}
+function animateCount(id, target) {
+  const el = document.getElementById(id);
+  let current = parseInt(el.textContent.replace(/\D/g,'')) || 0;
+  const step = Math.ceil(Math.abs(target - current) / 20);
+  const interval = setInterval(() => {
+    current += step;
+    if (current >= target) { el.textContent = target.toLocaleString(); clearInterval(interval); }
+    else el.textContent = current.toLocaleString();
+  }, 40);
+}
+
+/* ================================================
+   TOAST
+================================================ */
+function showToast(msg, type='info') {
+  const icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', info: 'fa-circle-info' };
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<i class="fa-solid ${icons[type]}"></i><span>${msg}</span>`;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(20px)'; t.style.transition = 'all .3s'; setTimeout(() => t.remove(), 300); }, 3500);
+}
+
+/* ================================================
+   INIT
+================================================ */
+window.addEventListener('DOMContentLoaded', () => {
+  loadGoals();
+  renderDashboard();
+  renderPublicBoard();
+  renderLeaderboard();
+  updateStats();
+  setInterval(tickCountdowns, 1000);
+  // Simulate live activity
+  setInterval(() => {
+    const msgs = ["Alex just staked $50 on 'Finish thesis draft' 🔥","Riley completed 'No sugar for 7 days' ✅","$30 donated to WWF — someone missed their deadline 💸","Jordan's check-in: 'Crushing it' on their fitness goal 💪"];
+    showToast(msgs[Math.floor(Math.random()*msgs.length)], 'info');
+  }, 25000);
+});
+</script>
+</body>
+</html>
