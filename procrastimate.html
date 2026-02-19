@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ProcrastiMate — Stop Lying to Yourself</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg2: #111111;
+    --bg3: #1a1a1a;
+    --card: #161616;
+    --border: #2a2a2a;
+    --orange: #ff5f1f;
+    --red: #ff2d2d;
+    --yellow: #ffcc00;
+    --green: #00e676;
+    --text: #f0ece4;
+    --muted: #888;
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--orange);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s ease;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid var(--orange);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.18s ease, width 0.2s, height 0.2s;
+    opacity: 0.5;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 10000;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 2.5rem;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+    color: var(--orange);
+  }
+  .logo span { color: var(--text); }
+  nav ul { list-style: none; display: flex; gap: 2rem; }
+  nav ul a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: color 0.2s;
+  }
+  nav ul a:hover { color: var(--orange); }
+  .nav-cta {
+    background: var(--orange);
+    color: #000 !important;
+    padding: 0.5rem 1.2rem;
+    border-radius: 4px;
+    font-weight: 600 !important;
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: #ff7a3f !important; color: #000 !important; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 8rem 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,95,31,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,95,31,0.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 30%, transparent 100%);
+  }
+  .hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(255,95,31,0.15) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--orange);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255,95,31,0.3);
+    padding: 0.35rem 1rem;
+    border-radius: 2px;
+    display: inline-block;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(4rem, 12vw, 10rem);
+    line-height: 0.92;
+    letter-spacing: 2px;
+    animation: fadeUp 0.7s 0.1s ease both;
+    position: relative;
+  }
+  .hero h1 .strike {
+    position: relative;
+    color: var(--muted);
+  }
+  .hero h1 .strike::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    top: 50%; height: 5px;
+    background: var(--red);
+    transform: rotate(-2deg);
+  }
+  .hero h1 .orange { color: var(--orange); }
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 520px;
+    line-height: 1.7;
+    margin: 2rem auto 0;
+    animation: fadeUp 0.7s 0.2s ease both;
+  }
+  .hero-sub strong { color: var(--text); }
+  .hero-btns {
+    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+    margin-top: 2.5rem;
+    animation: fadeUp 0.7s 0.3s ease both;
+  }
+  .btn-primary {
+    background: var(--orange);
+    color: #000;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.9rem 2.2rem;
+    border-radius: 4px;
+    border: none;
+    cursor: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+    letter-spacing: 0.5px;
+    font-family: var(--font-body);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(255,95,31,0.4);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text);
+    font-size: 1rem;
+    padding: 0.9rem 2.2rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    cursor: none;
+    transition: border-color 0.15s;
+    font-family: var(--font-body);
+  }
+  .btn-ghost:hover { border-color: var(--orange); color: var(--orange); }
+
+  .live-ticker {
+    margin-top: 3.5rem;
+    display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 0.7s 0.4s ease both;
+  }
+  .ticker-item {
+    text-align: center;
+  }
+  .ticker-val {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    color: var(--orange);
+    line-height: 1;
+  }
+  .ticker-label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: 0.25rem;
+  }
+  .ticker-divider {
+    width: 1px;
+    background: var(--border);
+    align-self: stretch;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SECTION SHARED */
+  section { padding: 6rem 2rem; }
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--orange);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    line-height: 1;
+    letter-spacing: 1px;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  /* HOW IT WORKS */
+  #how { background: var(--bg2); }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3.5rem;
+  }
+  .step-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 2rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .step-card:hover {
+    border-color: var(--orange);
+    transform: translateY(-4px);
+  }
+  .step-card::before {
+    content: attr(data-num);
+    font-family: var(--font-display);
+    font-size: 5rem;
+    color: rgba(255,95,31,0.06);
+    position: absolute;
+    top: -0.5rem; right: 0.5rem;
+    line-height: 1;
+  }
+  .step-icon {
+    font-size: 2rem; margin-bottom: 1rem;
+  }
+  .step-card h3 {
+    font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem;
+  }
+  .step-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+  /* PLEDGE FORM */
+  #pledge { background: var(--bg); }
+  .pledge-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    margin-top: 3.5rem;
+    align-items: start;
+  }
+  @media (max-width: 768px) {
+    .pledge-wrapper { grid-template-columns: 1fr; }
+  }
+  .pledge-form {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2.5rem;
+  }
+  .form-group { margin-bottom: 1.5rem; }
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  input, textarea, select {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    padding: 0.85rem 1rem;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+    cursor: none;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--orange); }
+  textarea { resize: vertical; min-height: 80px; }
+  select option { background: var(--bg3); }
+
+  .stake-options {
+    display: flex; gap: 0.7rem; flex-wrap: wrap;
+  }
+  .stake-btn {
+    flex: 1; min-width: 70px;
+    padding: 0.7rem 0;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    color: var(--muted);
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    cursor: none;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .stake-btn.active {
+    border-color: var(--orange);
+    color: var(--orange);
+    background: rgba(255,95,31,0.1);
+  }
+  .stake-btn:hover { border-color: var(--orange); color: var(--orange); }
+
+  .charity-select {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.7rem;
+    margin-top: 0.5rem;
+  }
+  .charity-opt {
+    padding: 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg3);
+    font-size: 0.82rem;
+    color: var(--muted);
+    cursor: none;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .charity-opt.active {
+    border-color: var(--green);
+    color: var(--green);
+    background: rgba(0,230,118,0.07);
+  }
+  .charity-opt:hover { border-color: var(--green); }
+
+  .submit-pledge {
+    width: 100%;
+    padding: 1rem;
+    background: var(--orange);
+    color: #000;
+    font-size: 1.05rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: none;
+    font-family: var(--font-body);
+    letter-spacing: 0.5px;
+    margin-top: 0.5rem;
+    transition: box-shadow 0.2s, transform 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .submit-pledge:hover {
+    box-shadow: 0 8px 30px rgba(255,95,31,0.45);
+    transform: translateY(-2px);
+  }
+  .submit-pledge::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+    transform: translateX(-100%);
+    transition: transform 0.4s ease;
+  }
+  .submit-pledge:hover::after { transform: translateX(100%); }
+
+  /* LIVE FEED */
+  .live-feed {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .feed-header {
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0.7rem;
+    font-size: 0.85rem; font-weight: 600;
+  }
+  .live-dot {
+    width: 8px; height: 8px;
+    background: var(--red);
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+  .feed-list { max-height: 420px; overflow-y: auto; }
+  .feed-list::-webkit-scrollbar { width: 4px; }
+  .feed-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .feed-item {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex; gap: 1rem; align-items: flex-start;
+    transition: background 0.15s;
+  }
+  .feed-item:hover { background: rgba(255,95,31,0.04); }
+  .feed-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+  }
+  .feed-content { flex: 1; }
+  .feed-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .feed-goal {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 0.2rem;
+    line-height: 1.5;
+  }
+  .feed-meta {
+    display: flex; gap: 0.8rem; margin-top: 0.5rem; flex-wrap: wrap;
+  }
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+  }
+  .badge-stake {
+    background: rgba(255,95,31,0.15);
+    color: var(--orange);
+    border: 1px solid rgba(255,95,31,0.3);
+  }
+  .badge-time {
+    background: rgba(255,204,0,0.1);
+    color: var(--yellow);
+    border: 1px solid rgba(255,204,0,0.25);
+  }
+  .badge-done {
+    background: rgba(0,230,118,0.1);
+    color: var(--green);
+    border: 1px solid rgba(0,230,118,0.25);
+  }
+  .badge-failed {
+    background: rgba(255,45,45,0.1);
+    color: var(--red);
+    border: 1px solid rgba(255,45,45,0.25);
+  }
+
+  /* SUCCESS MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    z-index: 800;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .modal-overlay.show { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--orange);
+    border-radius: 16px;
+    padding: 3rem 2.5rem;
+    max-width: 480px; width: 90%;
+    text-align: center;
+    transform: scale(0.9);
+    transition: transform 0.3s;
+  }
+  .modal-overlay.show .modal { transform: scale(1); }
+  .modal-emoji { font-size: 4rem; margin-bottom: 1rem; }
+  .modal h2 {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    color: var(--orange);
+    margin-bottom: 0.5rem;
+  }
+  .modal p { color: var(--muted); line-height: 1.6; margin-bottom: 1.5rem; }
+  .modal-code {
+    font-family: var(--font-mono);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    font-size: 1.1rem;
+    color: var(--orange);
+    margin: 1rem 0;
+    letter-spacing: 4px;
+  }
+  .modal-close {
+    background: var(--orange);
+    color: #000;
+    font-weight: 700;
+    padding: 0.8rem 2rem;
+    border: none;
+    border-radius: 6px;
+    cursor: none;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+  }
+
+  /* LEADERBOARD */
+  #leaderboard { background: var(--bg2); }
+  .lb-tabs {
+    display: flex; gap: 0.5rem; margin-top: 2.5rem; margin-bottom: 2rem;
+  }
+  .lb-tab {
+    padding: 0.6rem 1.3rem;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    border-radius: 4px;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    cursor: none;
+    transition: all 0.15s;
+  }
+  .lb-tab.active {
+    background: var(--orange);
+    color: #000;
+    border-color: var(--orange);
+    font-weight: 700;
+  }
+  .lb-table {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .lb-row {
+    display: grid;
+    grid-template-columns: 50px 1fr auto auto;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    align-items: center;
+    transition: background 0.15s;
+  }
+  .lb-row:hover { background: rgba(255,95,31,0.04); }
+  .lb-row:last-child { border-bottom: none; }
+  .lb-row.header {
+    background: var(--bg3);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .lb-rank {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--muted);
+    text-align: center;
+  }
+  .lb-rank.gold { color: #FFD700; font-weight: 700; }
+  .lb-rank.silver { color: #C0C0C0; font-weight: 700; }
+  .lb-rank.bronze { color: #CD7F32; font-weight: 700; }
+  .lb-user { font-weight: 500; font-size: 0.9rem; }
+  .lb-user span { color: var(--muted); font-size: 0.8rem; font-weight: 400; display: block; margin-top: 0.1rem; }
+  .lb-streak {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--yellow);
+    text-align: right;
+  }
+  .lb-saved {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--green);
+    text-align: right;
+  }
+
+  /* COUNTDOWN TIMER WIDGET */
+  .my-pledges {
+    margin-top: 3.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .pledge-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: border-color 0.2s;
+  }
+  .pledge-card:hover { border-color: rgba(255,95,31,0.4); }
+  .pledge-card-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+  .pledge-card-title { font-weight: 600; font-size: 0.95rem; line-height: 1.4; }
+  .pledge-progress {
+    height: 4px;
+    background: var(--bg3);
+    border-radius: 2px;
+    margin: 1rem 0;
+    overflow: hidden;
+  }
+  .pledge-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--orange), var(--red));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+  .pledge-countdown {
+    font-family: var(--font-mono);
+    font-size: 1.3rem;
+    color: var(--orange);
+    letter-spacing: 2px;
+  }
+  .pledge-countdown.urgent { color: var(--red); animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: 0.4; } }
+  .pledge-footer {
+    display: flex; justify-content: space-between;
+    margin-top: 1rem; font-size: 0.82rem; color: var(--muted);
+  }
+  .complete-btn {
+    padding: 0.5rem 1.2rem;
+    background: rgba(0,230,118,0.12);
+    color: var(--green);
+    border: 1px solid rgba(0,230,118,0.3);
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: none;
+    font-family: var(--font-body);
+    transition: all 0.15s;
+  }
+  .complete-btn:hover { background: rgba(0,230,118,0.2); }
+
+  /* STATS SECTION */
+  #stats { background: var(--bg); overflow: hidden; }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  @media (max-width: 768px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .stat-card:hover {
+    border-color: var(--orange);
+    transform: translateY(-3px);
+  }
+  .stat-val {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--orange);
+  }
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+  }
+  .stat-sub {
+    font-size: 0.75rem;
+    color: rgba(255,95,31,0.6);
+    margin-top: 0.3rem;
+    font-family: var(--font-mono);
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 3rem 2.5rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  footer .foot-logo {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    color: var(--orange);
+    margin-bottom: 0.5rem;
+  }
+  footer p { max-width: 500px; margin: 0.5rem auto; line-height: 1.6; }
+  footer .foot-links { display: flex; gap: 2rem; justify-content: center; margin-top: 1.5rem; }
+  footer .foot-links a { color: var(--muted); text-decoration: none; }
+  footer .foot-links a:hover { color: var(--orange); }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem;
+    background: var(--card);
+    border: 1px solid var(--orange);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    z-index: 600;
+    font-size: 0.9rem;
+    max-width: 320px;
+    transform: translateX(120%);
+    transition: transform 0.3s ease;
+  }
+  .toast.show { transform: translateX(0); }
+  .toast-title { font-weight: 600; color: var(--orange); margin-bottom: 0.2rem; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    nav ul { display: none; }
+    .hero h1 { font-size: 3.5rem; }
+    .steps { grid-template-columns: 1fr; }
+  }
+
+  /* SCROLL FADE IN */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">PROCRASTI<span>MATE</span></div>
+  <ul>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#pledge">Make a Pledge</a></li>
+    <li><a href="#leaderboard">Leaderboard</a></li>
+    <li><a href="#pledge" class="nav-cta">Start Now</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="eyebrow">🔥 2,847 people are being held accountable right now</div>
+  <h1>
+    <span class="strike">LATER</span><br>
+    MEANS<br>
+    <span class="orange">NEVER.</span>
+  </h1>
+  <p class="hero-sub">
+    Declare your goal publicly. <strong>Stake your money.</strong> Miss the deadline → your cash gets donated automatically. Nobody asked for this. <strong>But you need it.</strong>
+  </p>
+  <div class="hero-btns">
+    <button class="btn-primary" onclick="scrollToPledge()">Stake My Accountability</button>
+    <button class="btn-ghost" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See How It Works</button>
+  </div>
+  <div class="live-ticker">
+    <div class="ticker-item">
+      <div class="ticker-val" id="heroStaked">$84,220</div>
+      <div class="ticker-label">Total Staked</div>
+    </div>
+    <div class="ticker-divider"></div>
+    <div class="ticker-item">
+      <div class="ticker-val" id="heroGoals">12,490</div>
+      <div class="ticker-label">Goals Declared</div>
+    </div>
+    <div class="ticker-divider"></div>
+    <div class="ticker-item">
+      <div class="ticker-val" id="heroSuccess">73%</div>
+      <div class="ticker-label">Success Rate</div>
+    </div>
+    <div class="ticker-divider"></div>
+    <div class="ticker-item">
+      <div class="ticker-val" id="heroDonated">$9,310</div>
+      <div class="ticker-label">Donated to Charity</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="section-label reveal">/ How It Works</div>
+    <h2 class="section-title reveal">Four Steps.<br>No Excuses.</h2>
+    <div class="steps">
+      <div class="step-card reveal" data-num="01">
+        <div class="step-icon">🎯</div>
+        <h3>Declare Your Goal</h3>
+        <p>Write exactly what you'll accomplish. Be specific. Vague goals fail — "finish chapter 3" beats "work on my book."</p>
+      </div>
+      <div class="step-card reveal" data-num="02">
+        <div class="step-icon">💸</div>
+        <h3>Stake Your Money</h3>
+        <p>Put $5 to $500 on the line. The pain of losing money is 2x stronger than the pleasure of gaining it. Use that.</p>
+      </div>
+      <div class="step-card reveal" data-num="03">
+        <div class="step-icon">👁️</div>
+        <h3>Go Public</h3>
+        <p>Your pledge appears on the live feed. Strangers are watching. Social shame is a feature, not a bug.</p>
+      </div>
+      <div class="step-card reveal" data-num="04">
+        <div class="step-icon">⚡</div>
+        <h3>Finish or Donate</h3>
+        <p>Complete it → get your money back + a winner badge. Fail → your stake auto-donates to your chosen charity.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLEDGE FORM -->
+<section id="pledge">
+  <div class="container">
+    <div class="section-label reveal">/ Make Your Pledge</div>
+    <h2 class="section-title reveal">Put Your Money<br>Where Your Mouth Is.</h2>
+    <div class="pledge-wrapper">
+      <div class="pledge-form reveal">
+        <div class="form-group">
+          <label>Your Goal (be specific)</label>
+          <textarea id="goalText" placeholder="e.g. Finish the landing page design for my startup by Friday 11 PM..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Your Name / Handle</label>
+          <input type="text" id="userName" placeholder="@yourusername" />
+        </div>
+        <div class="form-group">
+          <label>Deadline</label>
+          <input type="datetime-local" id="deadlineInput" />
+        </div>
+        <div class="form-group">
+          <label>Stake Amount</label>
+          <div class="stake-options" id="stakeOptions">
+            <div class="stake-btn" onclick="setStake(this,'5')">$5</div>
+            <div class="stake-btn active" onclick="setStake(this,'20')">$20</div>
+            <div class="stake-btn" onclick="setStake(this,'50')">$50</div>
+            <div class="stake-btn" onclick="setStake(this,'100')">$100</div>
+            <div class="stake-btn" onclick="setStake(this,'custom')">Custom</div>
+          </div>
+          <input type="number" id="customStake" placeholder="Enter custom amount ($)" style="margin-top:0.7rem; display:none;" />
+        </div>
+        <div class="form-group">
+          <label>If I fail, donate to:</label>
+          <div class="charity-select" id="charitySelect">
+            <div class="charity-opt active" onclick="setCharity(this,'Red Cross')">🩸 Red Cross</div>
+            <div class="charity-opt" onclick="setCharity(this,'WWF')">🐼 WWF</div>
+            <div class="charity-opt" onclick="setCharity(this,'UNICEF')">🌍 UNICEF</div>
+            <div class="charity-opt" onclick="setCharity(this,'Local Food Bank')">🍱 Food Bank</div>
+          </div>
+        </div>
+        <button class="submit-pledge" onclick="submitPledge()">🔥 Stake My Accountability</button>
+      </div>
+
+      <!-- LIVE FEED -->
+      <div class="live-feed reveal">
+        <div class="feed-header">
+          <div class="live-dot"></div>
+          Live Pledges
+          <span style="margin-left:auto; color: var(--muted); font-size:0.75rem; font-weight:400;" id="feedCount">2,847 active</span>
+        </div>
+        <div class="feed-list" id="feedList"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACTIVE PLEDGES TRACKER -->
+<section id="tracker" style="background: var(--bg2); padding: 5rem 2rem;">
+  <div class="container">
+    <div class="section-label reveal">/ Your Dashboard</div>
+    <h2 class="section-title reveal">Active Pledges</h2>
+    <div class="my-pledges" id="myPledges"></div>
+    <p id="noPledges" style="color:var(--muted); margin-top:2rem; font-size:0.9rem; display:none;">
+      No active pledges yet. Make your first pledge above! 👆
+    </p>
+  </div>
+</section>
+
+<!-- LEADERBOARD -->
+<section id="leaderboard">
+  <div class="container">
+    <div class="section-label reveal">/ Hall of Fame & Shame</div>
+    <h2 class="section-title reveal">Who's Winning.<br>Who's Paying.</h2>
+    <div class="lb-tabs">
+      <button class="lb-tab active" onclick="setTab(this,'winners')">🏆 Winners</button>
+      <button class="lb-tab" onclick="setTab(this,'losers')">💀 Donors</button>
+      <button class="lb-tab" onclick="setTab(this,'streaks')">🔥 Streaks</button>
+    </div>
+    <div class="lb-table" id="lbTable"></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section id="stats">
+  <div class="container">
+    <div class="section-label reveal">/ By The Numbers</div>
+    <h2 class="section-title reveal">Proof It Works.</h2>
+    <div class="stats-grid">
+      <div class="stat-card reveal">
+        <div class="stat-val" id="s1">73%</div>
+        <div class="stat-label">Success Rate</div>
+        <div class="stat-sub">vs 12% without stake</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-val" id="s2">$84K</div>
+        <div class="stat-label">Total Staked</div>
+        <div class="stat-sub">this month</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-val" id="s3">$9.3K</div>
+        <div class="stat-label">Donated</div>
+        <div class="stat-sub">to charities</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-val" id="s4">2.8K</div>
+        <div class="stat-label">Active Users</div>
+        <div class="stat-sub">right now</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-logo">PROCRASTIMATE</div>
+  <p>The accountability partner nobody asked for. But everyone needed.</p>
+  <p style="margin-top:0.3rem; font-size:0.75rem;">Built for students, creators, founders — anyone who says "I'll do it tomorrow."</p>
+  <div class="foot-links">
+    <a href="#">About</a>
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Contact</a>
+    <a href="#">Blog</a>
+  </div>
+  <p style="margin-top:2rem; font-size:0.75rem; opacity:0.4;">© 2025 ProcrastiMate. Stop lying to yourself.</p>
+</footer>
+
+<!-- SUCCESS MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-emoji">🔥</div>
+    <h2>PLEDGE LOCKED!</h2>
+    <p>Your goal is now public. The clock is ticking. Don't let <strong>strangers on the internet</strong> watch you fail.</p>
+    <div class="modal-code" id="pledgeCode">PM-0000</div>
+    <p style="font-size:0.8rem;">Save this code to verify completion later.</p>
+    <button class="modal-close" onclick="closeModal()">Let's Get To Work →</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-title" id="toastTitle">🎉 New pledge!</div>
+  <div id="toastBody">Someone just committed to a goal.</div>
+</div>
+
+<script>
+// ─── CURSOR ───────────────────────────────────────────
+const cursor = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.transform = `translate(${mx - 6}px, ${my - 6}px)`;
+});
+function animRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  cursorRing.style.transform = `translate(${rx - 18}px, ${ry - 18}px)`;
+  requestAnimationFrame(animRing);
+}
+animRing();
+document.querySelectorAll('button, .stake-btn, .charity-opt, .lb-tab, .complete-btn, .nav-cta, a').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.style.transform += ' scale(2)';
+    cursorRing.style.width = '56px';
+    cursorRing.style.height = '56px';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursorRing.style.width = '36px';
+    cursorRing.style.height = '36px';
+  });
+});
+
+// ─── SCROLL REVEAL ────────────────────────────────────
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ─── STATE ─────────────────────────────────────────────
+let selectedStake = '20';
+let selectedCharity = 'Red Cross';
+let myPledgesList = [];
+
+// ─── LIVE FEED DATA ────────────────────────────────────
+const emojis = ['🚀','📚','💪','🎨','🧪','🎯','💻','✍️','🏋️','🎸','📐','🔬'];
+const names = ['alex_builds','@saria.c','v_creates','dev_biscuit','thuy_codes','rina_w','frank_writes','noor_makes','jae_studio','priya_dev','carlos_x','lena_art'];
+const goals = [
+  'Finish my React portfolio site by Sunday midnight',
+  'Complete first 5 pages of my short story',
+  'Submit university application draft to mentor',
+  'Record and edit YouTube video on productivity',
+  'Complete Python ML course module 4',
+  'Design 3 logo concepts for client',
+  'Write 2000 words of my thesis intro',
+  'Build and deploy the MVP backend API',
+  'Finish reading "Atomic Habits" and make notes',
+  'Complete Figma prototype for app idea',
+  'Prepare pitch deck — all 12 slides done',
+  'Finish the illustration commission'
+];
+const charities = ['Red Cross','WWF','UNICEF','Food Bank'];
+const statuses = ['active','active','active','active','active','done','failed'];
+
+function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function randomItem(arr) { return arr[randomInt(0, arr.length - 1)]; }
+
+function genFeedItems(count) {
+  return Array.from({length: count}, (_, i) => ({
+    id: i,
+    name: randomItem(names),
+    emoji: randomItem(emojis),
+    goal: randomItem(goals),
+    stake: randomItem([5,10,20,50,100]),
+    charity: randomItem(charities),
+    hoursLeft: randomInt(1, 72),
+    status: randomItem(statuses)
+  }));
+}
+
+let feedItems = genFeedItems(18);
+
+function renderFeed() {
+  const list = document.getElementById('feedList');
+  list.innerHTML = '';
+  const allItems = [...myPledgesList.map(p => ({...p, isMine: true})), ...feedItems];
+  allItems.forEach(item => {
+    const statusBadge = item.status === 'done'
+      ? `<span class="badge badge-done">✅ Completed</span>`
+      : item.status === 'failed'
+      ? `<span class="badge badge-failed">💀 Donated</span>`
+      : `<span class="badge badge-time">⏰ ${item.hoursLeft}h left</span>`;
+    const div = document.createElement('div');
+    div.className = 'feed-item';
+    div.innerHTML = `
+      <div class="feed-avatar">${item.emoji || '🎯'}</div>
+      <div class="feed-content">
+        <div class="feed-name">${item.name || item.userName}${item.isMine ? ' <span style="color:var(--orange);font-size:0.7rem;">(you)</span>' : ''}</div>
+        <div class="feed-goal">${item.goal || item.goalText}</div>
+        <div class="feed-meta">
+          <span class="badge badge-stake">$${item.stake} → ${item.charity || item.selectedCharity}</span>
+          ${statusBadge}
+        </div>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+// ─── STAKE / CHARITY SELECT ───────────────────────────
+function setStake(el, val) {
+  document.querySelectorAll('.stake-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  const custom = document.getElementById('customStake');
+  if (val === 'custom') {
+    selectedStake = 'custom';
+    custom.style.display = 'block';
+    custom.focus();
+  } else {
+    selectedStake = val;
+    custom.style.display = 'none';
+  }
+}
+function setCharity(el, val) {
+  document.querySelectorAll('.charity-opt').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  selectedCharity = val;
+}
+
+// ─── SUBMIT PLEDGE ────────────────────────────────────
+function submitPledge() {
+  const goal = document.getElementById('goalText').value.trim();
+  const name = document.getElementById('userName').value.trim();
+  const deadline = document.getElementById('deadlineInput').value;
+  const stakeAmt = selectedStake === 'custom'
+    ? parseFloat(document.getElementById('customStake').value)
+    : parseFloat(selectedStake);
+
+  if (!goal) { showToast('⚠️ Missing Goal', 'Please describe what you will accomplish.'); return; }
+  if (!name) { showToast('⚠️ Who are you?', 'Add your name or handle.'); return; }
+  if (!deadline) { showToast('⚠️ No Deadline', 'When will you finish? Set a deadline.'); return; }
+  if (!stakeAmt || stakeAmt < 1) { showToast('⚠️ Invalid Stake', 'Set a valid stake amount.'); return; }
+
+  const pledge = {
+    id: Date.now(),
+    userName: name,
+    goalText: goal,
+    deadline: new Date(deadline),
+    stake: stakeAmt,
+    charity: selectedCharity,
+    emoji: randomItem(emojis),
+    status: 'active',
+    created: new Date()
+  };
+
+  myPledgesList.push(pledge);
+  renderFeed();
+  renderMyPledges();
+  showModal(pledge);
+
+  // Reset form
+  document.getElementById('goalText').value = '';
+  document.getElementById('userName').value = '';
+  document.getElementById('deadlineInput').value = '';
+}
+
+// ─── MODAL ─────────────────────────────────────────────
+function showModal(pledge) {
+  const code = 'PM-' + Math.floor(Math.random() * 9000 + 1000);
+  document.getElementById('pledgeCode').textContent = code;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ─── MY PLEDGES TRACKER ───────────────────────────────
+function renderMyPledges() {
+  const container = document.getElementById('myPledges');
+  const noPledges = document.getElementById('noPledges');
+  container.innerHTML = '';
+  if (myPledgesList.length === 0) {
+    noPledges.style.display = 'block';
+    return;
+  }
+  noPledges.style.display = 'none';
+  myPledgesList.forEach(pledge => {
+    if (pledge.status !== 'active') return;
+    const now = new Date();
+    const dl = new Date(pledge.deadline);
+    const totalMs = dl - new Date(pledge.created);
+    const leftMs = Math.max(0, dl - now);
+    const pct = Math.min(100, Math.max(0, ((totalMs - leftMs) / totalMs) * 100));
+
+    const h = Math.floor(leftMs / 3600000);
+    const m = Math.floor((leftMs % 3600000) / 60000);
+    const s = Math.floor((leftMs % 60000) / 1000);
+    const timeStr = leftMs <= 0
+      ? 'EXPIRED'
+      : h > 48 ? `${Math.floor(h/24)}d ${h%24}h` : `${h}h ${m}m ${s}s`;
+
+    const urgent = h < 2 && leftMs > 0;
+
+    const card = document.createElement('div');
+    card.className = 'pledge-card';
+    card.id = 'pcard-' + pledge.id;
+    card.innerHTML = `
+      <div class="pledge-card-header">
+        <div class="pledge-card-title">${pledge.emoji} ${pledge.goalText}</div>
+        <span class="badge badge-stake">$${pledge.stake}</span>
+      </div>
+      <div style="font-size:0.78rem; color:var(--muted); margin-bottom:0.5rem;">
+        If failed → $${pledge.stake} to ${pledge.charity}
+      </div>
+      <div class="pledge-progress">
+        <div class="pledge-progress-fill" style="width:${pct}%"></div>
+      </div>
+      <div class="pledge-countdown${urgent ? ' urgent' : ''}" id="cd-${pledge.id}">${timeStr}</div>
+      <div class="pledge-footer">
+        <span>Deadline: ${new Date(pledge.deadline).toLocaleString()}</span>
+        <button class="complete-btn" onclick="completePledge(${pledge.id})">✅ Mark Done</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function completePledge(id) {
+  const pledge = myPledgesList.find(p => p.id === id);
+  if (!pledge) return;
+  pledge.status = 'done';
+  renderMyPledges();
+  renderFeed();
+  showToast('🎉 Goal Completed!', `"${pledge.goalText.slice(0,40)}..." — You got your $${pledge.stake} back!`);
+}
+
+// Live countdown update
+setInterval(() => {
+  myPledgesList.forEach(pledge => {
+    if (pledge.status !== 'active') return;
+    const now = new Date();
+    const dl = new Date(pledge.deadline);
+    const leftMs = Math.max(0, dl - now);
+    const h = Math.floor(leftMs / 3600000);
+    const m = Math.floor((leftMs % 3600000) / 60000);
+    const s = Math.floor((leftMs % 60000) / 1000);
+    const timeStr = leftMs <= 0 ? 'EXPIRED' : h > 48 ? `${Math.floor(h/24)}d ${h%24}h` : `${h}h ${m}m ${s}s`;
+    const cdEl = document.getElementById('cd-' + pledge.id);
+    if (cdEl) {
+      cdEl.textContent = timeStr;
+      if (h < 2 && leftMs > 0) cdEl.classList.add('urgent');
+    }
+    if (leftMs <= 0 && pledge.status === 'active') {
+      pledge.status = 'failed';
+      showToast('💸 Time\'s Up!', `$${pledge.stake} is being donated to ${pledge.charity}...`);
+      renderMyPledges();
+      renderFeed();
+    }
+  });
+}, 1000);
+
+// ─── TOAST ─────────────────────────────────────────────
+function showToast(title, body) {
+  document.getElementById('toastTitle').textContent = title;
+  document.getElementById('toastBody').textContent = body;
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+// Random live toasts
+const liveToastMessages = [
+  ['🔥 New Pledge!', 'alex_builds staked $50 on finishing their portfolio'],
+  ['⏰ 1 Hour Left!', 'priya_dev has 1 hour to finish her ML module'],
+  ['✅ Goal Completed!', 'noor_makes just verified their logo design'],
+  ['💀 Donated!', '$20 from jae_studio just went to Red Cross'],
+  ['🚀 New Streak!', 'thuy_codes is on a 7-day completion streak'],
+];
+setInterval(() => {
+  const msg = randomItem(liveToastMessages);
+  showToast(msg[0], msg[1]);
+}, 12000);
+
+// ─── LEADERBOARD ───────────────────────────────────────
+const lbData = {
+  winners: [
+    { rank: 1, name: 'thuy_codes', sub: '14 goals completed', streak: '🔥 14', saved: '$280' },
+    { rank: 2, name: 'priya_dev', sub: '11 goals completed', streak: '🔥 11', saved: '$220' },
+    { rank: 3, name: 'noor_makes', sub: '9 goals completed', streak: '🔥 9', saved: '$180' },
+    { rank: 4, name: 'carlos_x', sub: '7 goals completed', streak: '🔥 7', saved: '$140' },
+    { rank: 5, name: 'saria.c', sub: '6 goals completed', streak: '🔥 6', saved: '$120' },
+    { rank: 6, name: 'dev_biscuit', sub: '5 goals completed', streak: '🔥 5', saved: '$100' },
+  ],
+  losers: [
+    { rank: 1, name: 'frank_writes', sub: '$120 donated total', streak: '💀 6x', saved: '$120 lost' },
+    { rank: 2, name: 'lena_art', sub: '$80 donated total', streak: '💀 4x', saved: '$80 lost' },
+    { rank: 3, name: 'v_creates', sub: '$60 donated total', streak: '💀 3x', saved: '$60 lost' },
+    { rank: 4, name: 'jae_studio', sub: '$40 donated total', streak: '💀 2x', saved: '$40 lost' },
+  ],
+  streaks: [
+    { rank: 1, name: 'thuy_codes', sub: 'Current streak', streak: '🔥 14 days', saved: '$280 kept' },
+    { rank: 2, name: 'priya_dev', sub: 'Current streak', streak: '🔥 11 days', saved: '$220 kept' },
+    { rank: 3, name: 'alex_builds', sub: 'Current streak', streak: '🔥 8 days', saved: '$160 kept' },
+    { rank: 4, name: 'rina_w', sub: 'Current streak', streak: '🔥 5 days', saved: '$100 kept' },
+  ]
+};
+
+function setTab(el, tab) {
+  document.querySelectorAll('.lb-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderLB(tab);
+}
+
+function renderLB(tab) {
+  const data = lbData[tab];
+  const table = document.getElementById('lbTable');
+  const rankClass = r => r === 1 ? 'gold' : r === 2 ? 'silver' : r === 3 ? 'bronze' : '';
+  const rankIcon = r => r === 1 ? '🥇' : r === 2 ? '🥈' : r === 3 ? '🥉' : `#${r}`;
+  table.innerHTML = `
+    <div class="lb-row header">
+      <div>Rank</div>
+      <div>User</div>
+      <div style="text-align:right">${tab === 'winners' ? 'Streak' : tab === 'streaks' ? 'Streak' : 'Failures'}</div>
+      <div style="text-align:right">${tab === 'losers' ? 'Donated' : 'Saved'}</div>
+    </div>
+    ${data.map(u => `
+      <div class="lb-row">
+        <div class="lb-rank ${rankClass(u.rank)}">${rankIcon(u.rank)}</div>
+        <div class="lb-user">${u.name}<span>${u.sub}</span></div>
+        <div class="lb-streak">${u.streak}</div>
+        <div class="lb-saved">${u.saved}</div>
+      </div>
+    `).join('')}
+  `;
+}
+
+// ─── ANIMATED TICKER ──────────────────────────────────
+function animateNum(el, start, end, prefix = '', suffix = '', duration = 2000) {
+  let startTime = null;
+  function step(ts) {
+    if (!startTime) startTime = ts;
+    const progress = Math.min((ts - startTime) / duration, 1);
+    const val = Math.floor(progress * (end - start) + start);
+    el.textContent = prefix + val.toLocaleString() + suffix;
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// ─── DEFAULT DEADLINE ─────────────────────────────────
+const now = new Date();
+now.setDate(now.getDate() + 3);
+now.setHours(23, 59, 0, 0);
+const pad = n => String(n).padStart(2,'0');
+document.getElementById('deadlineInput').value =
+  `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+// ─── INIT ──────────────────────────────────────────────
+function scrollToPledge() {
+  document.getElementById('pledge').scrollIntoView({ behavior: 'smooth' });
+}
+
+renderFeed();
+renderLB('winners');
+renderMyPledges();
+
+// Animated hero numbers on load
+setTimeout(() => {
+  animateNum(document.getElementById('heroStaked'), 0, 84220, '$', '');
+  animateNum(document.getElementById('heroGoals'), 0, 12490, '', '');
+  animateNum(document.getElementById('heroDonated'), 0, 9310, '$', '');
+}, 300);
+
+// Random feed refresh simulation
+setInterval(() => {
+  const newItem = {
+    id: Date.now(),
+    name: randomItem(names),
+    emoji: randomItem(emojis),
+    goal: randomItem(goals),
+    stake: randomItem([5,10,20,50,100]),
+    charity: randomItem(charities),
+    hoursLeft: randomInt(1, 72),
+    status: 'active'
+  };
+  feedItems.unshift(newItem);
+  if (feedItems.length > 25) feedItems.pop();
+  renderFeed();
+}, 15000);
+</script>
+</body>
+</html>
